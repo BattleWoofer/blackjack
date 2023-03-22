@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+    <button   type="button"  id="start">Start Round</button>
+    <button   type="button"  id="house">Progress House</button>
+
+    <button   type="button"  id="hit">Hit</button>
+    <button   type="button"  id="stand">Stand</button>
+    <button   type="button"  id="dd">Double Down</button>
+    <button   type="button"  id="pair">Split Pairs</button>
+
+
+    </div>
+    <div>
+        <p id="score">Player Cards: ()</p>
+    </div>
+    <div>
+        <p id="p1"></p>
+    </div>
+    <div>
+        <p id="hScore">House Cards: ()</p>
+    </div>
+    <div>
+        <p id="hCards"></p>
+    </div>
+    <script>
+        
+            bet = 0;
+            chips = 0;
+            var denom = null;
+            var pairing = false;
+            var secret = null;
+
+            playToWin = false;
+
+            houseState = "start"
+/*
+            var inQ = false;
+            var qBet = null;
+            var qDenom = null;*/
+
+            havemark = false;
+
+            var cardString = document.getElementById("p1")
+            var cardText = []
+            updateCardText();
+
+            var hcardString = document.getElementById("hCards")
+            var hcardText = []
+            var hscore = 0
+            hupdateCardText();
+
+            var score = 0
+            var indexx = ["CA", "DA", "HA", "SA", "C2", "D2", "H2", "S2", "C3", "D3", "H3", "S3", "C4", "D4", "H4", "S4", "C5", "D5", "H5", "S5", "C6", "D6", "H6", "S6", "C7", "D7", "H7", "S7", "C8", "D8", "H8", "S8", "C9", "D9", "H9", "S9", "CX", "DX", "HX", "SX", "CJ", "DJ", "HJ", "SJ", "CQ", "DQ", "HQ", "SQ", "CK", "DK", "HK", "SK"];
+
+            const hitButton = document.getElementById("hit");
+            hitButton.addEventListener("click", function(a){
+               if(pairing = true){
+                pairing = false;
+                pairButton.disabled = true;
+               }
+            })
+
+            const ddButton = document.getElementById("dd");
+            ddButton.disabled = true;
+            const pairButton = document.getElementById("pair");
+            pairButton.disabled = true;
+            const standButton = document.getElementById("stand")
+            standButton.disabled = true;
+            standButton.addEventListener("click", function(d){
+                var standing = true;
+                houseButton.disabled = false;
+                hitButton.disabled = true;
+                standButton.disabled = true;
+                console.log("FINAL SCORE:")
+                console.log(score);
+            })
+
+
+
+
+
+
+            hitButton.disabled = true;
+            
+            const houseButton = document.getElementById("house");
+            houseButton.disabled = true;
+            houseButton.addEventListener("click", function(c){
+                if(score == 21){
+                    houseState = "laststand"
+                }
+                if(houseState == "laststand"){
+                    console.log("rinning right")
+                    houseDraw()
+                    houseDraw()
+                    if(hscore < 21){
+                        alert("player win by natural blackjack")
+                        return;
+                    }else{
+                        alert("aww shucks stumped by house blackjack")
+                        return;
+                    }
+                    
+                }
+
+
+                if(houseState == "start"){
+                    houseDraw();
+                    mystery();
+                    if(hscore == 10){
+                        houseState = "revealImm"
+                        return;
+                    }
+                    if(hscore == 11){
+                        console.log("insure")
+                        houseState = "revealImm"
+                        return;
+                    }
+                    if(hscore < 10){
+                        houseButton.disabled = true;
+                        hitButton.disabled = false;
+                        standButton.disabled = false;
+                        houseState = "reveal"
+                        return;
+                    }
+                }
+                if(houseState == "revealImm"){
+                    reveal();
+                    if(hscore == 21){
+                        alert("house win by blackjack");
+                        return;
+                    }
+                    if(hscore > 16){
+                        houseState = "stand";
+                        playToWin = true;
+                        houseButton.disabled = true;
+                        hitButton.disabled = false;
+                        standButton.disabled = false;
+                        console.log(houseState)
+                        return;
+                    }
+                    if(hscore < 17){
+                        houseState = "hit" 
+                        houseButton.disabled = true;
+                        hitButton.disabled = false;
+                        standButton.disabled = false;
+                        console.log(houseState)
+
+                        return;
+                    }
+                }
+                if(houseState == "reveal"){
+                    reveal();
+                    if(hscore > 16){
+                        if(score > hscore){
+                            alert("player win by score")
+                        }else{
+                            alert("house win by score")
+                        }
+                        return;
+                    }else{
+                        houseState = "hit"
+                        return;
+                    }
+
+                }
+
+                if(houseState == "hit"){
+                    houseDraw();
+                    if(hscore > 16){
+                        houseState = "stand"
+                        if(hscore > 21){
+                            alert("player win by house bust")
+                            return
+                        }
+                        if(hscore == 21){
+                            alert("house win by blackjack")
+                            return
+                        }
+                        if(score > hscore){
+                            alert("player win by score")
+                            return
+                        }else{
+                            alert("house win by score")
+                            return
+                        }
+                    }
+                }
+            })
+
+            const startButton = document.getElementById("start");
+            startButton.addEventListener("click", function(b){
+                standing = false;
+                var houseState = "start";
+                havemark = false;
+                denom = null;
+                pairing = false;
+                score = 0;
+                secret = null;
+                startButton.disabled = true;
+                ddButton.disabled = true;
+                var indexx = ["CA", "DA", "HA", "SA", "C2", "D2", "H2", "S2", "C3", "D3", "H3", "S3", "C4", "D4", "H4", "S4", "C5", "D5", "H5", "S5", "C6A", "D6", "H6", "S6", "C7", "D7", "H7", "S7", "C8", "D8", "H8", "S8", "C9", "D9", "H9", "S9", "CX", "DX", "HX", "SX", "CJ", "DJ", "HJ", "SJ", "CQ", "DQ", "HQ", "SQ", "CK", "DK", "HK", "SK"];
+                drawStart();
+                drawStart();
+                if(score > 8 && score < 12){
+                    if (bet * 2 > chips){
+                        ddButton.disabled = true;
+                        alert("bet too high to double down!")
+                    }else{
+                    ddButton.disabled = false;}
+                } 
+                console.log(score)
+                if(score == 21){
+                    houseState = "laststand"
+                    console.log(houseState)
+                }
+                houseButton.disabled = false;               
+            })
+
+            hitButton.addEventListener("click", function(d){
+                drawStart();
+                console.log(score)
+                if(score >= 21){
+                    alert("house win by player bust")
+                    return;
+                }
+                if(score == 21){
+                    //check with house
+                    alert("check w/ house")
+                }
+                if(playToWin == true){
+                    if(score > hscore){
+                        alert("WIN")
+                    }
+                }
+            })
+
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * max);
+            }
+            function updateCardText(){
+                cardString.innerHTML = cardText;
+            }
+            function hupdateCardText(){
+              /*  hcardString.innerHTML = hcardText;
+                if(havemark == true){
+                    hcardString.innerHTML += " + ?"
+                }*/
+                if(havemark == true){
+                    hcardString.innerHTML = hcardText + " + ?"
+                }
+                if(havemark == false){
+                    hcardString.innerHTML = hcardText;
+                }
+            }
+            function Ace(){
+                if(score + 11 > 21){
+                    return 1;
+                } else{
+                    if(confirm("Take ace as 11?\nCancelling takes as 1.")){
+                        return 11;
+                    }else {return 1}
+                }
+            }
+
+            function mystery(){
+                var max = indexx.length;
+                var rand = getRandomInt(max);
+                var draw = indexx.at(rand)
+                secret = draw
+                indexx.pop(rand);
+                havemark = true;
+                hupdateCardText();
+            }
+
+            function drawStart(){
+                var max = indexx.length;
+                    var rand = getRandomInt(max);
+                    var draw = indexx.at(rand);
+                    indexx.pop(rand);
+                    if(draw == "CA"){
+                        cardText.push("♣A")
+                        updateCardText();
+                        var AceValue = Ace()
+                        score += AceValue;
+                    }
+                    if(draw == "DA"){
+                        cardText.push("♦A")
+                        updateCardText();
+                        var AceValue = Ace()
+                        score += AceValue;
+                    }
+                    if(draw == "HA"){
+                        cardText.push("♥A")
+                        updateCardText();
+                        var AceValue = Ace()
+                        score += AceValue;
+                    }
+                    if(draw == "SA"){
+                        cardText.push("♠A")
+                        updateCardText();
+                        var AceValue = Ace()
+                        score += AceValue;
+                    }
+                    if(draw == "C2"){
+                        cardText.push("♣2")
+                        updateCardText();
+                        score += 2;
+                    }
+                    if(draw == "D2"){
+                        cardText.push("♦2")
+                        updateCardText();
+                        score += 2;
+                    }
+                    if(draw == "H2"){
+                        cardText.push("♥2")
+                        updateCardText();
+                        score += 2;
+                    }
+                    if(draw == "S2"){
+                        cardText.push("♠2")
+                        updateCardText();
+                        score += 2;
+                    }
+                    if(draw == "C3"){
+                        cardText.push("♣3")
+                        updateCardText();
+                        score += 3;
+                    }
+                    if(draw == "D3"){
+                        cardText.push("♦3")
+                        updateCardText();
+                        score += 3;
+                    }
+                    if(draw == "H3"){
+                        cardText.push("♥3")
+                        updateCardText();
+                        score += 3;
+                    }
+                    if(draw == "S3"){
+                        cardText.push("♠3")
+                        updateCardText();
+                        score += 3;
+                    }
+                    if(draw == "C4"){
+                        cardText.push("♣4")
+                        updateCardText();
+                        score += 4;
+                    }
+                    if(draw == "D4"){
+                        cardText.push("♦4")
+                        updateCardText();
+                        score += 4;
+                    }
+                    if(draw == "H4"){
+                        cardText.push("♥4")
+                        updateCardText();
+                        score += 4;
+                    }
+                    if(draw == "S4"){
+                        cardText.push("♠4")
+                        updateCardText();
+                        score += 4;
+                    }
+                    if(draw == "C5"){
+                        cardText.push("♣5")
+                        updateCardText();
+                        score += 5;
+                    }
+                    if(draw == "D5"){
+                        cardText.push("♦5")
+                        updateCardText();
+                        score += 5;
+                    }
+                    if(draw == "H5"){
+                        cardText.push("♥5")
+                        updateCardText();
+                        score += 5;
+                    }
+                    if(draw == "S5"){
+                        cardText.push("♠5")
+                        updateCardText();
+                        score += 5;
+                    }
+                    if(draw == "C6"){
+                        cardText.push("♣6")
+                        updateCardText();
+                        score += 6;
+                    }
+                    if(draw == "D6"){
+                        cardText.push("♦6")
+                        updateCardText();
+                        score += 6;
+                    }
+                    if(draw == "H6"){
+                        cardText.push("♥6")
+                        updateCardText();
+                        score += 6;
+                    }
+                    if(draw == "S6"){
+                        cardText.push("♠6")
+                        updateCardText();
+                        score += 6;
+                    }
+                    if(draw == "C7"){
+                        cardText.push("♣7")
+                        updateCardText();
+                        score += 7;
+                    }
+                    if(draw == "D7"){
+                        cardText.push("♦7")
+                        updateCardText();
+                        score += 7;
+                    }
+                    if(draw == "H7"){
+                        cardText.push("♥7")
+                        updateCardText();
+                        score += 7;
+                    }
+                    if(draw == "S7"){
+                        cardText.push("♠7")
+                        updateCardText();
+                        score += 7;
+                    }
+                    if(draw == "C8"){
+                        cardText.push("♣8")
+                        updateCardText();
+                        score += 8;
+                    }
+                    if(draw == "D8"){
+                        cardText.push("♦8")
+                        updateCardText();
+                        score += 8;
+                    }
+                    if(draw == "H8"){
+                        cardText.push("♥8")
+                        updateCardText();
+                        score += 8;
+                    }
+                    if(draw == "S8"){
+                        cardText.push("♠8")
+                        updateCardText();
+                        score += 8;
+                    }
+                    if(draw == "C9"){
+                        cardText.push("♣9")
+                        updateCardText();
+                        score += 9;
+                    }
+                    if(draw == "D9"){
+                        cardText.push("♦9")
+                        updateCardText();
+                        score += 9;
+                    }
+                    if(draw == "H9"){
+                        cardText.push("♥9")
+                        updateCardText();
+                        score += 9;
+                    }
+                    if(draw == "S9"){
+                        cardText.push("♠9")
+                        updateCardText();
+                        score += 9;
+                    }
+                    if(draw == "CX"){
+                        cardText.push("♣10")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "DX"){
+                        cardText.push("♦10")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "HX"){
+                        cardText.push("♥10")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "SX"){
+                        cardText.push("♠10")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "CJ"){
+                        cardText.push("♣J")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "DJ"){
+                        cardText.push("♦J")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "HJ"){
+                        cardText.push("♥J")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "SJ"){
+                        cardText.push("♠J")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "CQ"){
+                        cardText.push("♣Q")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "DQ"){
+                        cardText.push("♦Q")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "HQ"){
+                        cardText.push("♥Q")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "SQ"){
+                        cardText.push("♠Q")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "CK"){
+                        cardText.push("♣K")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "DK"){
+                        cardText.push("♦K")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "HK"){
+                        cardText.push("♥K")
+                        updateCardText();
+                        score += 10;
+                    }
+                    if(draw == "SK"){
+                        cardText.push("♠K")
+                        updateCardText();
+                        score += 10;
+                    };
+            };
+
+            function houseDraw(){
+                var max = indexx.length;
+                var rand = getRandomInt(max);
+                var draw = indexx.at(rand);
+                indexx.pop(rand)
+                if(draw == "CA"){
+                        hcardText.push("♣A")
+                        hupdateCardText();
+                        if(hscore > 11){
+                            hscore += 1
+                        }else{hscore += 11}
+                    }
+                    if(draw == "DA"){
+                        hcardText.push("♦A")
+                        hupdateCardText();
+                        if(hscore > 11){
+                            hscore += 1
+                        }else{hscore += 11}
+                    }
+                    if(draw == "HA"){
+                        hcardText.push("♥A")
+                        hupdateCardText();
+                        if(hscore > 11){
+                            hscore += 1
+                        }else{hscore += 11}
+                    }
+                    if(draw == "SA"){
+                        hcardText.push("♠A")
+                        hupdateCardText();
+                        if(hscore > 11){
+                            hscore += 1
+                        }else{hscore += 11}
+                    }
+                    if(draw == "C2"){
+                        hcardText.push("♣2")
+                        hupdateCardText();
+                        hscore += 2;
+                    }
+                    if(draw == "D2"){
+                        hcardText.push("♦2")
+                        hupdateCardText();
+                        hscore += 2;
+                    }
+                    if(draw == "H2"){
+                        hcardText.push("♥2")
+                        hupdateCardText();
+                        hscore += 2;
+                    }
+                    if(draw == "S2"){
+                        hcardText.push("♠2")
+                        hupdateCardText();
+                        hscore += 2;
+                    }
+                    if(draw == "C3"){
+                        hcardText.push("♣3")
+                        hupdateCardText();
+                        hscore += 3;
+                    }
+                    if(draw == "D3"){
+                        hcardText.push("♦3")
+                        hupdateCardText();
+                        hscore += 3;
+                    }
+                    if(draw == "H3"){
+                        hcardText.push("♥3")
+                        hupdateCardText();
+                        hscore += 3;
+                    }
+                    if(draw == "S3"){
+                        hcardText.push("♠3")
+                        hupdateCardText();
+                        hscore += 3;
+                    }
+                    if(draw == "C4"){
+                        hcardText.push("♣4")
+                        hupdateCardText();
+                        hscore += 4;
+                    }
+                    if(draw == "D4"){
+                       hcardText.push("♦4")
+                        hupdateCardText();
+                        hscore += 4;
+                    }
+                    if(draw == "H4"){
+                        hcardText.push("♥4")
+                        hupdateCardText();
+                        hscore += 4;
+                    }
+                    if(draw == "S4"){
+                        hcardText.push("♠4")
+                        hupdateCardText();
+                        hscore += 4;
+                    }
+                    if(draw == "C5"){
+                        hcardText.push("♣5")
+                        hupdateCardText();
+                       hscore += 5;
+                    }
+                    if(draw == "D5"){
+                        hcardText.push("♦5")
+                        hupdateCardText();
+                        hscore += 5;
+                    }
+                    if(draw == "H5"){
+                        hcardText.push("♥5")
+                        hupdateCardText();
+                        hscore += 5;
+                    }
+                    if(draw == "S5"){
+                        hcardText.push("♠5")
+                        hupdateCardText();
+                        hscore += 5;
+                    }
+                    if(draw == "C6"){
+                        hcardText.push("♣6")
+                        hupdateCardText();
+                        hscore += 6;
+                    }
+                    if(draw == "D6"){
+                        hcardText.push("♦6")
+                        hupdateCardText();
+                        hscore += 6;
+                    }
+                    if(draw == "H6"){
+                        hcardText.push("♥6")
+                        hupdateCardText();
+                        hscore += 6;
+                    }
+                    if(draw == "S6"){
+                       hcardText.push("♠6")
+                        hupdateCardText();
+                        hscore += 6;
+                    }
+                    if(draw == "C7"){
+                        hcardText.push("♣7")
+                        hupdateCardText();
+                        hscore += 7;
+                    }
+                    if(draw == "D7"){
+                        hcardText.push("♦7")
+                        hupdateCardText();
+                        hscore += 7;
+                    }
+                    if(draw == "H7"){
+                       hcardText.push("♥7")
+                        hupdateCardText();
+                        hscore += 7;
+                    }
+                    if(draw == "S7"){
+                        hcardText.push("♠7")
+                        hupdateCardText();
+                        hscore += 7;
+                    }
+                    if(draw == "C8"){
+                        hcardText.push("♣8")
+                        hupdateCardText();
+                        hscore += 8;
+                    }
+                    if(draw == "D8"){
+                        hcardText.push("♦8")
+                        hupdateCardText();
+                        hscore += 8;
+                    }
+                    if(draw == "H8"){
+                        hcardText.push("♥8")
+                        hupdateCardText();
+                        hscore += 8;
+                    }
+                    if(draw == "S8"){
+                        hcardText.push("♠8")
+                        hupdateCardText();
+                        hscore += 8;
+                    }
+                    if(draw == "C9"){
+                        hcardText.push("♣9")
+                        hupdateCardText();
+                        hscore += 9;
+                    }
+                    if(draw == "D9"){
+                        hcardText.push("♦9")
+                        hupdateCardText();
+                        hscore += 9;
+                    }
+                    if(draw == "H9"){
+                        hcardText.push("♥9")
+                        hupdateCardText();
+                        hscore += 9;
+                    }
+                    if(draw == "S9"){
+                        hcardText.push("♠9")
+                        hupdateCardText();
+                        hscore += 9;
+                    }
+                    if(draw == "CX"){
+                        hcardText.push("♣10")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "DX"){
+                        hcardText.push("♦10")
+                       hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "HX"){
+                        hcardText.push("♥10")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "SX"){
+                        hcardText.push("♠10")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "CJ"){
+                        hcardText.push("♣J")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "DJ"){
+                        hcardText.push("♦J")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "HJ"){
+                        hcardText.push("♥J")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "SJ"){
+                        hcardText.push("♠J")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "CQ"){
+                        hcardText.push("♣Q")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "DQ"){
+                        hcardText.push("♦Q")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "HQ"){
+                        hcardText.push("♥Q")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "SQ"){
+                        hcardText.push("♠Q")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "CK"){
+                        hcardText.push("♣K")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "DK"){
+                        hcardText.push("♦K")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "HK"){
+                       hcardText.push("♥K")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "SK"){
+                        hcardText.push("♠K")
+                        hupdateCardText();
+                        hscore += 10;
+                    };
+            }
+
+            function reveal(){
+                draw = secret;
+                if(draw == "CA"){
+                        hcardText.push("♣A")
+                        hupdateCardText();
+                        if(hscore > 11){
+                            hscore += 1
+                        }else{hscore += 11}
+                    }
+                    if(draw == "DA"){
+                        hcardText.push("♦A")
+                        hupdateCardText();
+                        if(hscore > 11){
+                            hscore += 1
+                        }else{hscore += 11}
+                    }
+                    if(draw == "HA"){
+                        hcardText.push("♥A")
+                        hupdateCardText();
+                        if(hscore > 11){
+                            hscore += 1
+                        }else{hscore += 11}
+                    }
+                    if(draw == "SA"){
+                        hcardText.push("♠A")
+                        hupdateCardText();
+                        if(hscore > 11){
+                            hscore += 1
+                        }else{hscore += 11}
+                    }
+                    if(draw == "C2"){
+                        hcardText.push("♣2")
+                        hupdateCardText();
+                        hscore += 2;
+                    }
+                    if(draw == "D2"){
+                        hcardText.push("♦2")
+                        hupdateCardText();
+                        hscore += 2;
+                    }
+                    if(draw == "H2"){
+                        hcardText.push("♥2")
+                        hupdateCardText();
+                        hscore += 2;
+                    }
+                    if(draw == "S2"){
+                        hcardText.push("♠2")
+                        hupdateCardText();
+                        hscore += 2;
+                    }
+                    if(draw == "C3"){
+                        hcardText.push("♣3")
+                        hupdateCardText();
+                        hscore += 3;
+                    }
+                    if(draw == "D3"){
+                        hcardText.push("♦3")
+                        hupdateCardText();
+                        hscore += 3;
+                    }
+                    if(draw == "H3"){
+                        hcardText.push("♥3")
+                        hupdateCardText();
+                        hscore += 3;
+                    }
+                    if(draw == "S3"){
+                        hcardText.push("♠3")
+                        hupdateCardText();
+                        hscore += 3;
+                    }
+                    if(draw == "C4"){
+                        hcardText.push("♣4")
+                        hupdateCardText();
+                        hscore += 4;
+                    }
+                    if(draw == "D4"){
+                       hcardText.push("♦4")
+                        hupdateCardText();
+                        hscore += 4;
+                    }
+                    if(draw == "H4"){
+                        hcardText.push("♥4")
+                        hupdateCardText();
+                        hscore += 4;
+                    }
+                    if(draw == "S4"){
+                        hcardText.push("♠4")
+                        hupdateCardText();
+                        hscore += 4;
+                    }
+                    if(draw == "C5"){
+                        hcardText.push("♣5")
+                        hupdateCardText();
+                       hscore += 5;
+                    }
+                    if(draw == "D5"){
+                        hcardText.push("♦5")
+                        hupdateCardText();
+                        hscore += 5;
+                    }
+                    if(draw == "H5"){
+                        hcardText.push("♥5")
+                        hupdateCardText();
+                        hscore += 5;
+                    }
+                    if(draw == "S5"){
+                        hcardText.push("♠5")
+                        hupdateCardText();
+                        hscore += 5;
+                    }
+                    if(draw == "C6"){
+                        hcardText.push("♣6")
+                        hupdateCardText();
+                        hscore += 6;
+                    }
+                    if(draw == "D6"){
+                        hcardText.push("♦6")
+                        hupdateCardText();
+                        hscore += 6;
+                    }
+                    if(draw == "H6"){
+                        hcardText.push("♥6")
+                        hupdateCardText();
+                        hscore += 6;
+                    }
+                    if(draw == "S6"){
+                       hcardText.push("♠6")
+                        hupdateCardText();
+                        hscore += 6;
+                    }
+                    if(draw == "C7"){
+                        hcardText.push("♣7")
+                        hupdateCardText();
+                        hscore += 7;
+                    }
+                    if(draw == "D7"){
+                        hcardText.push("♦7")
+                        hupdateCardText();
+                        hscore += 7;
+                    }
+                    if(draw == "H7"){
+                       hcardText.push("♥7")
+                        hupdateCardText();
+                        hscore += 7;
+                    }
+                    if(draw == "S7"){
+                        hcardText.push("♠7")
+                        hupdateCardText();
+                        hscore += 7;
+                    }
+                    if(draw == "C8"){
+                        hcardText.push("♣8")
+                        hupdateCardText();
+                        hscore += 8;
+                    }
+                    if(draw == "D8"){
+                        hcardText.push("♦8")
+                        hupdateCardText();
+                        hscore += 8;
+                    }
+                    if(draw == "H8"){
+                        hcardText.push("♥8")
+                        hupdateCardText();
+                        hscore += 8;
+                    }
+                    if(draw == "S8"){
+                        hcardText.push("♠8")
+                        hupdateCardText();
+                        hscore += 8;
+                    }
+                    if(draw == "C9"){
+                        hcardText.push("♣9")
+                        hupdateCardText();
+                        hscore += 9;
+                    }
+                    if(draw == "D9"){
+                        hcardText.push("♦9")
+                        hupdateCardText();
+                        hscore += 9;
+                    }
+                    if(draw == "H9"){
+                        hcardText.push("♥9")
+                        hupdateCardText();
+                        hscore += 9;
+                    }
+                    if(draw == "S9"){
+                        hcardText.push("♠9")
+                        hupdateCardText();
+                        hscore += 9;
+                    }
+                    if(draw == "CX"){
+                        hcardText.push("♣10")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "DX"){
+                        hcardText.push("♦10")
+                       hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "HX"){
+                        hcardText.push("♥10")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "SX"){
+                        hcardText.push("♠10")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "CJ"){
+                        hcardText.push("♣J")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "DJ"){
+                        hcardText.push("♦J")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "HJ"){
+                        hcardText.push("♥J")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "SJ"){
+                        hcardText.push("♠J")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "CQ"){
+                        hcardText.push("♣Q")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "DQ"){
+                        hcardText.push("♦Q")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "HQ"){
+                        hcardText.push("♥Q")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "SQ"){
+                        hcardText.push("♠Q")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "CK"){
+                        hcardText.push("♣K")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "DK"){
+                        hcardText.push("♦K")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "HK"){
+                       hcardText.push("♥K")
+                        hupdateCardText();
+                        hscore += 10;
+                    }
+                    if(draw == "SK"){
+                        hcardText.push("♠K")
+                        hupdateCardText();
+                        hscore += 10;
+                    };
+                    hcardString.innerHTML = hcardText;
+                    havemark = false;
+                    hupdateCardText;
+            }
+
+        
+    </script>
+</body>
+</html>
