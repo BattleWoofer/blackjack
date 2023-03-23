@@ -118,6 +118,16 @@
             const standButton = document.getElementById("stand")
             standButton.disabled = true;
             standButton.addEventListener("click", function(d){
+                if(houseState == "stand"){
+                    if(score > hscore){
+                        alert("player win by score")
+                        Reset(1)
+                        return;}else{
+                            alert("house win by score")
+                            Reset(0)
+                            return
+                        }
+                }
                 var standing = true;
                 houseButton.disabled = false;
                 hitButton.disabled = true;
@@ -215,7 +225,7 @@
                         playToWin = true;
                         houseButton.disabled = true;
                         hitButton.disabled = false;
-                        standButton.disabled = true;
+                        standButton.disabled = false;
                         console.log(houseState)
                         return;
                     }
