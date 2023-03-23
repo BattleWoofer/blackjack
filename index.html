@@ -170,11 +170,11 @@
                     houseDraw()
                     houseDraw()
                     if(hscore < 21){
-                        alert("player win by natural blackjack")
+                        alert("player win by natural blackjack (" + score + ")")
                         Reset(1.5)
                         return;
                     }else{
-                        alert("aww shucks stumped by house blackjack")
+                        alert("aww shucks stumped by house blackjack (21=21)")
                         Reset(0)
                         return;
                     }
@@ -205,7 +205,7 @@
                 if(houseState == "revealImm"){
                     reveal();
                     if(hscore == 21){
-                        alert("house win by blackjack");
+                        alert("house win by blackjack (" + hscore + "=21)"));
                         Reset(0);
                         return;
                     }
@@ -232,10 +232,10 @@
                     reveal();
                     if(hscore > 16){
                         if(score > hscore){
-                            alert("player win by score")
+                            alert("player win by score (" + score + ">" + hscore + ")")
                             Reset(1)
                         }else{
-                            alert("house win by score")
+                            alert("house win by score (" + score + "<" + hscore + ")")
                             Reset(0)
                         }
                         return;
@@ -251,21 +251,21 @@
                     if(hscore > 16){
                         houseState = "stand"
                         if(hscore > 21){
-                            alert("player win by house bust")
+                            alert("player win by house bust (" + score + ">21" )
                             Reset(1)
                             return
                         }
                         if(hscore == 21){
-                            alert("house win by blackjack")
+                            alert("house win by blackjack (21=21)")
                             Reset(0)
                             return
                         }
                         if(score > hscore){
-                            alert("player win by score")
+                            alert("player win by score" + score + ">" + hscore)
                             Reset(1)
                             return
                         }else{
-                            alert("house win by score")
+                            alert("house win by score" + score + "<" + hscore)
                             Reset(0)
                             return
                         }
@@ -314,19 +314,19 @@
                 drawStart();
                 console.log(score)
                 if(score > 21){
-                    alert("house win by player bust")
+                    alert("house win by player bust (" + score + ">21)")
                     Reset(0)
                     return;
                 }
                 if(score == 21){
-                    alert("WIN")
+                    alert("Player win by blackjack (21=21)")
                     Reset(1)
                     return
                     //alert("check w/ house")
                 }
                 if(playToWin == true){
                     if(score > hscore){
-                        alert("player win by score")
+                        alert("player win by score (" + score + ">" + hscore + ")")
                         Reset(1)
                         return
                     }
