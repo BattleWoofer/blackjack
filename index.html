@@ -30,15 +30,22 @@
     <div>
         <p id="hCards"></p>
     </div>
+    <p id="chips">Chips:</p>
+    <button   type="button"  id="bet"><p id="bettext">Change Bet:Nan</p></button>    <button   type="button"  id="autobetbutton">AutoBet33%:Off</button>
+
+
     <script>
         
             bet = 0;
-            chips = 0;
+            chips = 100;
+            inPool = 0;
             var denom = null;
             var pairing = false;
             var secret = null;
 
             playToWin = false;
+
+            autoBet = false;
 
             houseState = "start"
 /*
@@ -59,6 +66,41 @@
 
             var score = 0
             var indexx = ["CA", "DA", "HA", "SA", "C2", "D2", "H2", "S2", "C3", "D3", "H3", "S3", "C4", "D4", "H4", "S4", "C5", "D5", "H5", "S5", "C6", "D6", "H6", "S6", "C7", "D7", "H7", "S7", "C8", "D8", "H8", "S8", "C9", "D9", "H9", "S9", "CX", "DX", "HX", "SX", "CJ", "DJ", "HJ", "SJ", "CQ", "DQ", "HQ", "SQ", "CK", "DK", "HK", "SK"];
+
+            const betButton = document.getElementById("bet")
+            const bettext = document.getElementById("bettext")
+
+            const chipsText = document.getElementById("chips")
+            function chipsUpdate(){
+                chipsText.innerHTML = "Chips: " + chips;
+            }
+            chipsUpdate();
+
+            const autoBetButton = document.getElementById("autobetbutton")
+            autoBetButton.addEventListener("click", function(y){
+                if(autoBet == false){
+                    autoBet = true;
+                    autoBetButton.innerHTML = "AutoBet:On"
+                    return;
+                }
+                if(autoBet == true){
+                    autoBet = false;
+                    autoBetButton.innerHTML = "AutoBet:Off"
+                    return;
+                }
+            })
+
+
+            betButton.addEventListener("click", function(z){
+                betTry = prompt("Max recommended: " + chips / 2)
+                console.log(betTry)
+                if(betTry > chips * 0.9){alert("Bet must be less than 90% of chips.")}else{bet=betTry; betTextUpdate();}
+            })
+
+            betTextUpdate();
+            function betTextUpdate(){
+                bettext.innerHTML = "Change Bet:" + bet;
+            }
 
             const hitButton = document.getElementById("hit");
             hitButton.addEventListener("click", function(a){
@@ -85,7 +127,34 @@
 
 
 
+            function Reset(winMult){
+                chips += inPool * winMult * 2;
+                chipsUpdate();
+                inPool = 0;
 
+                startButton.disabled=false;
+                houseButton.disabled = true;
+                hitButton.disabled = true;
+                standButton.disabled = true
+                
+                var autoBet = false;
+
+                hscore = 0;
+                standing = false;
+                houseState = "start";
+                havemark = false;
+                denom = null;
+                pairing = false;
+                score = 0;
+                secret = null;
+                indexx = indexx.slice(100)
+                indexx = ["CA", "DA", "HA", "SA", "C2", "D2", "H2", "S2", "C3", "D3", "H3", "S3", "C4", "D4", "H4", "S4", "C5", "D5", "H5", "S5", "C6A", "D6", "H6", "S6", "C7", "D7", "H7", "S7", "C8", "D8", "H8", "S8", "C9", "D9", "H9", "S9", "CX", "DX", "HX", "SX", "CJ", "DJ", "HJ", "SJ", "CQ", "DQ", "HQ", "SQ", "CK", "DK", "HK", "SK"];
+                cardText = cardText.slice(100)
+                updateCardText();
+                hcardText = hcardText.slice(100)
+                hupdateCardText();
+                console.log(houseState)
+            }
 
 
             hitButton.disabled = true;
@@ -102,9 +171,11 @@
                     houseDraw()
                     if(hscore < 21){
                         alert("player win by natural blackjack")
+                        Reset(1.5)
                         return;
                     }else{
                         alert("aww shucks stumped by house blackjack")
+                        Reset(0)
                         return;
                     }
                     
@@ -135,6 +206,7 @@
                     reveal();
                     if(hscore == 21){
                         alert("house win by blackjack");
+                        Reset(0);
                         return;
                     }
                     if(hscore > 16){
@@ -161,8 +233,10 @@
                     if(hscore > 16){
                         if(score > hscore){
                             alert("player win by score")
+                            Reset(1)
                         }else{
                             alert("house win by score")
+                            Reset(0)
                         }
                         return;
                     }else{
@@ -178,25 +252,37 @@
                         houseState = "stand"
                         if(hscore > 21){
                             alert("player win by house bust")
+                            Reset(1)
                             return
                         }
                         if(hscore == 21){
                             alert("house win by blackjack")
+                            Reset(0)
                             return
                         }
                         if(score > hscore){
                             alert("player win by score")
+                            Reset(1)
                             return
                         }else{
                             alert("house win by score")
+                            Reset(0)
                             return
                         }
                     }
                 }
+                console.log(houseState)
             })
 
             const startButton = document.getElementById("start");
             startButton.addEventListener("click", function(b){
+                if (chips < 1){chips = 1}
+                if(autoBet==true){
+                    bet = Math.floor(chips / 3) ;
+                }
+                inPool = bet;
+                chips -= bet;
+                chipsUpdate();
                 standing = false;
                 var houseState = "start";
                 havemark = false;
@@ -227,17 +313,22 @@
             hitButton.addEventListener("click", function(d){
                 drawStart();
                 console.log(score)
-                if(score >= 21){
+                if(score > 21){
                     alert("house win by player bust")
+                    Reset(0)
                     return;
                 }
                 if(score == 21){
-                    //check with house
-                    alert("check w/ house")
+                    alert("WIN")
+                    Reset(1)
+                    return
+                    //alert("check w/ house")
                 }
                 if(playToWin == true){
                     if(score > hscore){
-                        alert("WIN")
+                        alert("player win by score")
+                        Reset(1)
+                        return
                     }
                 }
             })
@@ -282,9 +373,12 @@
 
             function drawStart(){
                 var max = indexx.length;
+                console.log(max)
                     var rand = getRandomInt(max);
+                    console.log(rand)
                     var draw = indexx.at(rand);
-                    indexx.pop(rand);
+                    indexx.splice(rand, 1);
+                    console.log(indexx)
                     if(draw == "CA"){
                         cardText.push("♣A")
                         updateCardText();
