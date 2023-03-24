@@ -166,9 +166,9 @@
             const ddButton = document.getElementById("dd");
             ddButton.disabled = true;
         
-        playerScoreText.innerHTML = document.getElementById("pst")
-        houseScoreText.innerHTML = document.getElementById("hst")
-           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+        playerScoreText = document.getElementById("pst")
+        houseScoreText = document.getElementById("hst")
+           if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
         
        
             const standButton = document.getElementById("stand")
@@ -216,7 +216,7 @@
                 aces = 0;
                 
                 playToWin = false;                
-                           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                           if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
 
                 hscore = 0;
                 standing = false;
@@ -253,7 +253,7 @@
                     console.log("rinning right")
                     houseDraw()
                     houseDraw()
-                    if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                    if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
 
                     if(hscore < 21){
                         alert("player win by natural blackjack (" + score + ")")
@@ -271,7 +271,7 @@
                 if(houseState == "start"){
                     houseDraw();
                     mystery();
-                    if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                    if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
 
                     if(hscore == 10){
                         houseState = "revealImm"
@@ -298,7 +298,7 @@
                 }
                 if(houseState == "revealImm"){
                     reveal();
-                    if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                    if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
 
                     if(hscore == 21){
                         alert("house win by blackjack (" + hscore + "=21)");
@@ -408,7 +408,7 @@
                 var indexx = ["CA", "DA", "HA", "SA", "C2", "D2", "H2", "S2", "C3", "D3", "H3", "S3", "C4", "D4", "H4", "S4", "C5", "D5", "H5", "S5", "C6A", "D6", "H6", "S6", "C7", "D7", "H7", "S7", "C8", "D8", "H8", "S8", "C9", "D9", "H9", "S9", "CX", "DX", "HX", "SX", "CJ", "DJ", "HJ", "SJ", "CQ", "DQ", "HQ", "SQ", "CK", "DK", "HK", "SK"];
                 drawStart();
                 drawStart();
-                 if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                 if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
                 if(score > 8 && score < 12){
                     if (bet * 2 > chips){
                         ddButton.disabled = true;
@@ -446,7 +446,7 @@
 
             hitButton.addEventListener("click", function(d){
                 drawStart();
-                if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
                 console.log(score)
                 if(score > 21){
                     scoreCheck();
@@ -788,7 +788,7 @@
                         updateCardText();
                         score += 10;
                     };
-                           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                           if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
 
             };
 
@@ -1065,7 +1065,7 @@
                         hupdateCardText();
                         hscore += 10;
                     };
-                           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                           if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
 
             }
 
@@ -1342,7 +1342,7 @@
                     hcardString.innerHTML = hcardText;
                     havemark = false;
                     hupdateCardText;
-                           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+                           if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
 
             }
 
