@@ -8,7 +8,7 @@
 </head>
 <body>
     <div>
-    <button   type="button"  id="start">Start Round</button>
+    <button   type="button"  id="start">2.0 Start Round</button>
     <button   type="button"  id="house">Progress House</button>
 
     <button   type="button"  id="hit">Hit</button>
@@ -184,7 +184,7 @@
                 hitButton.disabled = true;
                 standButton.disabled = true
                 
-                ddButton.innerHTML = "Pot Doubled"
+                ddButton.innerHTML = "Double Down"
 
                 
                 playToWin = false;                
@@ -382,16 +382,18 @@
 
 
             })
-        
+        /*
             ddButton.addEventListener("click", function(w){
-                if(score > 11){alert("Too late!"); ddButton.disabled = true; return}
+                if(score > 11){alert("Too late!"); 
+                               ddButton.disabled = true;
+                               return}
                 chips -= inPool;
                 inPool = inPool * 2;
                 ddButton.disabled = true
                 ddButton.innerHTML = "Pot Doubled"
                 return
             })
-            
+            */
 
             hitButton.addEventListener("click", function(d){
                 drawStart();
