@@ -15,6 +15,7 @@
     <button   type="button"  id="stand">Stand</button>
     <button   type="button"  id="dd">Double Down</button>
     <button   type="button"  id="pair">Split Pairs</button>
+    <button type ="button" id="autohouse">AutoHouse:Off</button>
 
 
     </div>
@@ -34,9 +35,11 @@
     <button   type="button"  id="bet"><p id="bettext">Change Bet:Nan</p></button>    <button   type="button"  id="autobetbutton">AutoBet33%:Off</button>
     <p>The goal of Blackjack is to get your score as close to, or equal to, twenty-one, without going over. Ties go to the house.<br>Aces can be worth 11 or 1, face cards are 10, all others equal card number.<br><br>Step One: Player draws two cards. An ace and a 10-card make for a natural Blackjack, a 3x pot payout, but if the house matches draw, you lose.<br>Step Two: House draws one card face-up, one face-down. If the face-up risks Blackjack, the face-down is revealed. Otherwise, move to player turn.<br> Step Three: Player "hits" to draw cards and add points, but going over 21 will cause loss. "Stand" when desired points are reached.<br> Step Four: House draws until it reaches 17 points, or goes over 21. For the former, highest point value wins.
     </p>
+    <button id="save">SAVE</button>
 
     <script>
         
+            var saveKey;
             bet = 0;
             chips = 100;
             inPool = 0;
@@ -47,6 +50,7 @@
             playToWin = false;
 
             autoBet = false;
+            autoHouse = false;
 
             houseState = "start"
 /*
@@ -77,6 +81,17 @@
             }
             chipsUpdate();
 
+            chipsBruh = localStorage.getItem("saveKey")
+            chips = chipsBruh;
+            chipsUpdate()
+
+            const saveButton = document.getElementById("save")
+            saveButton.addEventListener("click", function(j){
+                console.log("QQQQQQQQQQQQQQQQQQQQQQQQQ")
+                localStorage.setItem("saveKey", chips)
+                console.log(localStorage.getItem("saveKey"))
+            })
+
             const autoBetButton = document.getElementById("autobetbutton")
             autoBetButton.addEventListener("click", function(y){
                 if(autoBet == false){
@@ -87,6 +102,19 @@
                 if(autoBet == true){
                     autoBet = false;
                     autoBetButton.innerHTML = "AutoBet:Off"
+                    return;
+                }
+            })
+            const autoHouseButton = document.getElementById("autohouse")
+            autoHouseButton.addEventListener("click", function(y){
+                if(autoHouse == false){
+                    autoHouse = true;
+                    autoHouseButton.innerHTML = "AutoHouse:On"
+                    return;
+                }
+                if(autoHouse == true){
+                    autoHouse = false;
+                    autoHouseButton.innerHTML = "AutoHouse:Off"
                     return;
                 }
             })
@@ -134,6 +162,9 @@
                 standButton.disabled = true;
                 console.log("FINAL SCORE:")
                 console.log(score);
+                if(autoHouse == true){
+                    House();
+                }
             })
 
 
@@ -173,6 +204,11 @@
             const houseButton = document.getElementById("house");
             houseButton.disabled = true;
             houseButton.addEventListener("click", function(c){
+                House();
+            })
+
+            function House(){
+                
                 if(score == 21){
                     houseState = "laststand"
                 }
@@ -198,11 +234,17 @@
                     mystery();
                     if(hscore == 10){
                         houseState = "revealImm"
+                        if(autoHouse == true){
+                    House();
+                }
                         return;
                     }
                     if(hscore == 11){
                         console.log("insure")
                         houseState = "revealImm"
+                        if(autoHouse == true){
+                    House();
+                }
                         return;
                     }
                     if(hscore < 10){
@@ -283,7 +325,12 @@
                     }
                 }
                 console.log(houseState)
-            })
+                if(autoHouse == true){
+                    if(houseButton.disable == false){
+                        House();
+                    }
+                }
+            }
 
             const startButton = document.getElementById("start");
             startButton.addEventListener("click", function(b){
@@ -318,7 +365,14 @@
                     houseState = "laststand"
                     console.log(houseState)
                 }
-                houseButton.disabled = false;               
+                houseButton.disabled = false; 
+                
+                
+                if(autoHouse == true){
+                House();}
+
+
+
             })
 
             hitButton.addEventListener("click", function(d){
