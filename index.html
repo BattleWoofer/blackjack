@@ -15,6 +15,7 @@
     <button   type="button"  id="stand">Stand</button>
     <button   type="button"  id="dd">Double Down</button>
     <button type ="button" id="autohouse">AutoHouse:Off</button>
+        <button id="babymode">BabyMode:Off</button>
 
 
     </div>
@@ -45,12 +46,15 @@
             var denom = null;
             var pairing = false;
             var secret = null;
+        
+            var aces = 0;
 
             playToWin = false;
 
             autoBet = false;
             autoHouse = false;
-
+            babyMode = false;
+        
             houseState = "start"
 /*
             var inQ = false;
@@ -90,6 +94,22 @@
         }
             chipsUpdate()
 
+        
+            const babyButton = document.getElementByID("babymode")
+            babyButton.addEventListener("click", function(l){
+            if(babyMode == false){
+                    babyMode = true;
+                    babyButton.innerHTML = "BabyMode:On"
+                    return;
+                }
+                if(babyMode == true){
+                    babyMode = false;
+                    babyButton.innerHTML = "BabyMode:Off"
+                    return;
+                }
+            
+            })
+        
             const saveButton = document.getElementById("save")
             saveButton.addEventListener("click", function(j){
                 console.log("QQQQQQQQQQQQQQQQQQQQQQQQQ")
@@ -145,7 +165,12 @@
 
             const ddButton = document.getElementById("dd");
             ddButton.disabled = true;
-           
+        
+        playerScoreText = document.getElementByID("pst")
+        houseScoreText = document.getElementByID("hst")
+           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+        
+       
             const standButton = document.getElementById("stand")
             standButton.disabled = true;
             standButton.addEventListener("click", function(d){
@@ -188,10 +213,11 @@
                 standButton.disabled = true
                 
                 ddButton.innerHTML = "Double Down"
-
+                aces = 0;
                 
                 playToWin = false;                
-                
+                           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+
                 hscore = 0;
                 standing = false;
                 houseState = "start";
@@ -227,6 +253,8 @@
                     console.log("rinning right")
                     houseDraw()
                     houseDraw()
+                    if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+
                     if(hscore < 21){
                         alert("player win by natural blackjack (" + score + ")")
                         Reset(1.5)
@@ -243,6 +271,8 @@
                 if(houseState == "start"){
                     houseDraw();
                     mystery();
+                    if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+
                     if(hscore == 10){
                         houseState = "revealImm"
                         if(autoHouse == true){
@@ -268,6 +298,8 @@
                 }
                 if(houseState == "revealImm"){
                     reveal();
+                    if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+
                     if(hscore == 21){
                         alert("house win by blackjack (" + hscore + "=21)");
                         Reset(0);
@@ -376,6 +408,7 @@
                 var indexx = ["CA", "DA", "HA", "SA", "C2", "D2", "H2", "S2", "C3", "D3", "H3", "S3", "C4", "D4", "H4", "S4", "C5", "D5", "H5", "S5", "C6A", "D6", "H6", "S6", "C7", "D7", "H7", "S7", "C8", "D8", "H8", "S8", "C9", "D9", "H9", "S9", "CX", "DX", "HX", "SX", "CJ", "DJ", "HJ", "SJ", "CQ", "DQ", "HQ", "SQ", "CK", "DK", "HK", "SK"];
                 drawStart();
                 drawStart();
+                 if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
                 if(score > 8 && score < 12){
                     if (bet * 2 > chips){
                         ddButton.disabled = true;
@@ -413,8 +446,10 @@
 
             hitButton.addEventListener("click", function(d){
                 drawStart();
+                if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
                 console.log(score)
                 if(score > 21){
+                    scoreCheck();
                     alert("house win by player bust (" + score + ">21)")
                     Reset(0)
                     return;
@@ -461,6 +496,15 @@
                     }else {return 1}
                 }
             }
+        
+            function scoreCheck(){
+                if(score > 21){
+                    if(aces > 0){
+                        score -= 10
+                        aces -= 1;
+                    }
+                }
+            }
 
             function mystery(){
                 var max = indexx.length;
@@ -483,26 +527,26 @@
                     if(draw == "CA"){
                         cardText.push("♣A")
                         updateCardText();
-                        var AceValue = Ace()
-                        score += AceValue;
+                        aces += 1;
+                        score += 11;
                     }
                     if(draw == "DA"){
                         cardText.push("♦A")
                         updateCardText();
-                        var AceValue = Ace()
-                        score += AceValue;
+                        aces += 1;
+                        score += 11;
                     }
                     if(draw == "HA"){
                         cardText.push("♥A")
                         updateCardText();
-                        var AceValue = Ace()
-                        score += AceValue;
+                        aces += 1;
+                        score += 11;
                     }
                     if(draw == "SA"){
                         cardText.push("♠A")
                         updateCardText();
-                        var AceValue = Ace()
-                        score += AceValue;
+                        aces += 1
+                        score += 1;
                     }
                     if(draw == "C2"){
                         cardText.push("♣2")
@@ -744,6 +788,8 @@
                         updateCardText();
                         score += 10;
                     };
+                           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+
             };
 
             function houseDraw(){
@@ -1019,6 +1065,8 @@
                         hupdateCardText();
                         hscore += 10;
                     };
+                           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+
             }
 
             function reveal(){
@@ -1294,6 +1342,8 @@
                     hcardString.innerHTML = hcardText;
                     havemark = false;
                     hupdateCardText;
+                           if(babyMode == true){playerScoreText = "Player Cards (" + score + ")"; houseScoreText = "House Cards (" + hscore + ")";}
+
             }
 
         
