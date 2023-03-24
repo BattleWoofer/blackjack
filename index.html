@@ -83,6 +83,7 @@
 
             chipsBruh = localStorage.getItem("saveKey")
             chips = chipsBruh;
+            if(chips == null){chips = 100}
             chipsUpdate()
 
             const saveButton = document.getElementById("save")
