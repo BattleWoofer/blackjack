@@ -14,7 +14,6 @@
     <button   type="button"  id="hit">Hit</button>
     <button   type="button"  id="stand">Stand</button>
     <button   type="button"  id="dd">Double Down</button>
-    <button   type="button"  id="pair">Split Pairs</button>
     <button type ="button" id="autohouse">AutoHouse:Off</button>
 
 
@@ -33,7 +32,7 @@
     </div>
     <p id="chips">Chips:</p>
     <button   type="button"  id="bet"><p id="bettext">Change Bet:Nan</p></button>    <button   type="button"  id="autobetbutton">AutoBet33%:Off</button>
-    <p>The goal of Blackjack is to get your score as close to, or equal to, twenty-one, without going over. Ties go to the house.<br>Aces can be worth 11 or 1, face cards are 10, all others equal card number.<br><br>Step One: Player draws two cards. An ace and a 10-card make for a natural Blackjack, a 3x pot payout, but if the house matches draw, you lose.<br>Step Two: House draws one card face-up, one face-down. If the face-up risks Blackjack, the face-down is revealed. Otherwise, move to player turn.<br> Step Three: Player "hits" to draw cards and add points, but going over 21 will cause loss. "Stand" when desired points are reached.<br> Step Four: House draws until it reaches 17 points, or goes over 21. For the former, highest point value wins.
+    <p>The goal of Blackjack is to get your score as close to, or equal to, twenty-one, without going over. Ties go to the house.<br>Aces can be worth 11 or 1, face cards are 10, all others equal card number.<br><br>Step One: Player draws two cards. An ace and a 10-card make for a natural Blackjack, a 3x pot payout, but if the house matches draw, you lose. If card total is 9 through 11, you can double your bet.<br>Step Two: House draws one card face-up, one face-down. If the face-up risks Blackjack, the face-down is revealed. Otherwise, move to player turn.<br> Step Three: Player "hits" to draw cards and add points, but going over 21 will cause loss. "Stand" when desired points are reached.<br> Step Four: House draws until it reaches 17 points, or goes over 21. For the former, highest point value wins.
     </p>
     <button id="save">SAVE</button>
 
@@ -84,6 +83,11 @@
             chipsBruh = localStorage.getItem("saveKey")
             chips = chipsBruh;
             if(chips == null){chips = 100}
+        if(chips < 100){
+             if(confirm("Loaded chips less than 100. Set to 100?")){
+                 chips = 100
+             }
+        }
             chipsUpdate()
 
             const saveButton = document.getElementById("save")
@@ -179,6 +183,9 @@
                 houseButton.disabled = true;
                 hitButton.disabled = true;
                 standButton.disabled = true
+                
+                ddButton.innerHTML = "Pot Doubled"
+
                 
                 playToWin = false;                
                 
@@ -375,6 +382,16 @@
 
 
             })
+        
+            ddButton.addEventListener("click", function(w){
+                if(score > 11){alert("Too late!"); ddButton.disabled = true; return}
+                chips -= inPool;
+                inPool = inPool * 2;
+                ddButton.disabled = true
+                ddButton.innerHTML = "Pot Doubled"
+                return
+            })
+            
 
             hitButton.addEventListener("click", function(d){
                 drawStart();
