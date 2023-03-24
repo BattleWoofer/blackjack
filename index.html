@@ -140,14 +140,12 @@
             hitButton.addEventListener("click", function(a){
                if(pairing = true){
                 pairing = false;
-                pairButton.disabled = true;
                }
             })
 
             const ddButton = document.getElementById("dd");
             ddButton.disabled = true;
-            const pairButton = document.getElementById("pair");
-            pairButton.disabled = true;
+           
             const standButton = document.getElementById("stand")
             standButton.disabled = true;
             standButton.addEventListener("click", function(d){
@@ -382,7 +380,7 @@
 
 
             })
-        /*
+        
             ddButton.addEventListener("click", function(w){
                 if(score > 11){alert("Too late!"); 
                                ddButton.disabled = true;
@@ -393,7 +391,7 @@
                 ddButton.innerHTML = "Pot Doubled"
                 return
             })
-            */
+            
 
             hitButton.addEventListener("click", function(d){
                 drawStart();
