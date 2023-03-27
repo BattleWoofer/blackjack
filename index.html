@@ -47,6 +47,8 @@
             var pairing = false;
             var secret = null;
         
+        var saved = false;
+        
             var aces = 0;
 
             playToWin = false;
@@ -217,7 +219,7 @@
                 
                 playToWin = false;                
                            if(babyMode == true){playerScoreText.innerHTML = "Player Cards (" + score + ")"; houseScoreText.innerHTML = "House Cards (" + hscore + ")";}
-
+                   saved = false;
                 hscore = 0;
                 standing = false;
                 houseState = "start";
@@ -450,6 +452,7 @@
                 console.log(score)
                 if(score > 21){
                     scoreCheck();
+                    if(saved == true){saved = false; return;}
                     alert("house win by player bust (" + score + ">21)")
                     Reset(0)
                     return;
@@ -502,6 +505,7 @@
                     if(aces > 0){
                         score -= 10
                         aces -= 1;
+                        saved = true;
                     }
                 }
             }
